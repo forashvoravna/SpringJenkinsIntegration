@@ -11,11 +11,10 @@ pipeline {
 
         stage('2. Eski dasturni to\'xtatish') {
             steps {
-                echo '8080 portni tekshirish va tozalash...'
-                // Agar 8080 portda eski dastur ishlab turgan bo'lsa, uni o'ldiradi.
-                // (Birinchi marta ishga tushganda port bo'sh bo'lsa, xato bermasligi uchun catchError ishlatildi)
+                echo '8078 portni tekshirish va tozalash...'
                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                    bat 'FOR /F "tokens=5" %%T IN (\'netstat -a -n -o ^| findstr :8080\') DO taskkill /F /PID %%T'
+                    // Port 8078 ga o'zgartirildi:
+                    bat 'FOR /F "tokens=5" %%T IN (\'netstat -a -n -o ^| findstr :8078\') DO taskkill /F /PID %%T'
                 }
             }
         }
@@ -24,11 +23,10 @@ pipeline {
             steps {
                 echo 'Yangi server ko\'tarilmoqda...'
                 bat '''
-                    :: Jenkins jarayon tugagach serverni o'chirib yubormasligi uchun maxsus buyruq:
                     set JENKINS_NODE_COOKIE=dontKillMe
 
-                    :: Yangi .jar faylni alohida oynada (orqa fonda) ishga tushirish
-                    start "Spring_Server" java -jar target\\*SNAPSHOT.jar
+                    :: /k buyrug'i terminal oynasi xatolik bersa ham yopilib ketmasligini ta'minlaydi
+                    start "Spring_Server" cmd /k "java -jar target\\*.jar"
                 '''
             }
         }
