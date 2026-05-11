@@ -13,7 +13,6 @@ pipeline {
             steps {
                 echo '8078 portni tekshirish va tozalash...'
                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                    // Port 8078 ga o'zgartirildi:
                     bat 'FOR /F "tokens=5" %%T IN (\'netstat -a -n -o ^| findstr :8078\') DO taskkill /F /PID %%T'
                 }
             }
@@ -25,8 +24,8 @@ pipeline {
                 bat '''
                     set JENKINS_NODE_COOKIE=dontKillMe
 
-                    :: /k buyrug'i terminal oynasi xatolik bersa ham yopilib ketmasligini ta'minlaydi
-                    start "Spring_Server" cmd /k "java -jar target\\*.jar"
+                    :: Windows uchun maxsus: Papkadagi jar faylni o'zi topib ishga tushiradi
+                    FOR %%i IN (target\\*.jar) DO start "Spring_Server" cmd /k "java -jar %%i"
                 '''
             }
         }
